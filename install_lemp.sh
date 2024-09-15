@@ -1,21 +1,27 @@
 #!/bin/bash
 
 # Update the package list
+echo "apt update"
 sudo apt update
 
 # Install Nginx
+echo "INSTALL NGINX"
 sudo apt install -y nginx
 
 # Start and enable Nginx
+echo "AUTO START NGINX"
 sudo systemctl enable --now nginx
 
 # Install MySQL server
-sudo apt install -y mysql-server
+echo "INSTALL MARIADB-SERVER"
+sudo apt install -y mariadb-server
 
 # Secure MySQL installation
+echo "SECURE MARIADB"
 sudo mysql_secure_installation
 
 # Install PHP and required PHP extensions
+echo "INSTALL PHP & REQUIRED PHP EXTENSION"
 sudo apt install -y php-fpm php-mysql
 
 # Configure Nginx to use PHP processor
