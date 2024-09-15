@@ -2,7 +2,9 @@ echo "INSTALL NVM"
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.0/install.sh | bash
 
 echo "SOURCE BASH"
-source ~/.bashrc
+echo "SOURCE BASH"
+export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # Ini memastikan nvm dapat diakses
 
 # download and install Node.js (you may need to restart the terminal)
 echo "INSTALL NPM V20"
