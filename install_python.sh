@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "########## INSTALING PYTHON PROJECT ##########"
+echo "########## INSTALLING PYTHON PROJECT ##########"
 
 echo "----- CHECKING INSTALLED PYTHON -----"
 
@@ -21,19 +21,62 @@ else
     sudo apt-get install python3-pip -y
 fi
 
+SETUP_DIR="example-apps/python"
+
 echo "----- TRY TO EXECUTE EXAMPLE APP -----"
+echo "########## SETUP EXAMPLE PYTHON APP ##########"
 
-SETUP_SCRIPT="example-apps/python/setup.sh"
-SETUP_DIR=$(dirname "$SETUP_SCRIPT")
-
-if [ -f "$SETUP_SCRIPT" ]; then
-    echo "Changing directory to: $SETUP_DIR"
-    cd "$SETUP_DIR" || { echo "Failed to change directory to $SETUP_DIR"; exit 1; }
-
-    echo "Running setup script: $SETUP_SCRIPT"
-    chmod +x "$(basename "$SETUP_SCRIPT")"
-    bash "$(basename "$SETUP_SCRIPT")"
+if [ -d "$SETUP_DIR" ]; then
+    echo "Directory $SETUP_DIR exists. Changing to that directory..."
+    cd "$SETUP_DIR"
 else
-    echo "Setup script not found: $SETUP_SCRIPT"
+    echo "Directory $SETUP_DIR does not exist. Exiting..."
     exit 1
+fi
+
+echo "----- INSTALLING PYTHON VENV -----"
+sudo apt install python3.10-venv -y
+
+echo "----- MAKE VENV -----"
+python3 -m venv .venv
+
+echo "----- ACTIVATE VENV -----"
+source .venv/bin/activate
+
+echo "----- INSTALLING DEPENDENCIES -----"
+pip install -r requirements.txt
+
+echo "----- STARTING APP -----"
+python3 app.py &
+
+PID=$!
+echo "Python app is running with PID $PID"
+
+sleep 5
+
+echo "Checking if Python app is running on port 10004 with ss..."
+sudo ss -tuln | grep ':10004'
+
+echo "Checking if Python app is running on port 10004 with netstat..."
+sudo netstat -tuln | grep ':10004'
+
+echo "Checking if Python app is running on port 10004 with lsof..."
+sudo lsof -i :10004
+
+echo "Checking process with ps..."
+ps aux | grep 'python3 app.py'
+
+echo "Waiting 1 minute before stopping the app..."
+sleep 60
+
+echo "Stopping the process with PID $PID..."
+kill $PID
+
+sleep 5
+
+echo "Checking if the process is still running..."
+if ps -p $PID > /dev/null; then
+    echo "Process is still running. Use 'kill -9' if needed."
+else
+    echo "Process has been stopped."
 fi

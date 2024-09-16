@@ -40,23 +40,52 @@ fi
 echo "----- CHECKING MAVEN INSTALLATION -----"
 mvn -version
 
-
 SETUP_DIR="example-apps/spring"
-SETUP_SCRIPT="setup.sh"
+
+echo "########## SETUP SPRING APP ##########"
 
 if [ -d "$SETUP_DIR" ]; then
-    echo "Changing directory to: $SETUP_DIR"
-    cd "$SETUP_DIR" || { echo "Failed to change directory to $SETUP_DIR"; exit 1; }
+    echo "Directory $SETUP_DIR exists. Changing to that directory..."
+    cd "$SETUP_DIR" || { echo "Failed to change directory to $SETUP_DIR. Exiting..."; exit 1; }
 else
-    echo "Directory not found: $SETUP_DIR"
+    echo "Directory $SETUP_DIR does not exist. Exiting..."
     exit 1
 fi
 
-if [ -f "$SETUP_SCRIPT" ]; then
-    echo "Running setup script: $SETUP_SCRIPT"
-    chmod +x "$SETUP_SCRIPT"
-    bash "$SETUP_SCRIPT" || { echo "Failed to execute $SETUP_SCRIPT"; exit 1; }
+echo "----- BUILDING PROJECT -----"
+mvn clean install
+
+echo "----- STARTING SPRING BOOT APPLICATION -----"
+mvn spring-boot:run
+
+PID=$!
+echo "Spring Boot application is running with PID $PID"
+
+sleep 5
+
+echo "Checking if Spring Boot is running on port 10005 with ss..."
+sudo ss -tuln | grep ':10005'
+
+echo "Checking if Spring Boot is running on port 10005 with netstat..."
+sudo netstat -tuln | grep ':10005'
+
+echo "Checking if Spring Boot is running on port 10005 with lsof..."
+sudo lsof -i :10005
+
+echo "Checking process with ps..."
+ps aux | grep 'mvn spring-boot:run'
+
+echo "Waiting 1 minute before stopping the Spring Boot application..."
+sleep 60
+
+echo "Stopping the Spring Boot process with PID $PID..."
+kill $PID
+
+sleep 5
+
+echo "Checking if the process is still running..."
+if ps -p $PID > /dev/null; then
+    echo "Process is still running. Use 'kill -9' if needed."
 else
-    echo "Setup script not found: $SETUP_SCRIPT"
-    exit 1
+    echo "Process has been stopped."
 fi
