@@ -2,8 +2,8 @@
 
 echo "########## INSTALLING SPRING BOOT ##########"
 
-echo "----- INSTALL OPENJDK 8 -----"
-sudo apt-get install openjdk-8-jre
+echo "----- INSTALL OPENJDK 21 -----"
+sudo apt-get install openjdk-21-jdk
 
 echo "----- MEASURE OPENJDK ALREADY INSTALLED -----"
 java -version
@@ -31,3 +31,24 @@ export PATH="$M2_HOME/bin:$PATH"
 
 echo "----- MEASURE MAVEN -----"
 mvn -version
+
+
+SETUP_DIR="example-apps/spring"
+SETUP_SCRIPT="setup.sh"
+
+if [ -d "$SETUP_DIR" ]; then
+    echo "Changing directory to: $SETUP_DIR"
+    cd "$SETUP_DIR" || { echo "Failed to change directory to $SETUP_DIR"; exit 1; }
+else
+    echo "Directory not found: $SETUP_DIR"
+    exit 1
+fi
+
+if [ -f "$SETUP_SCRIPT" ]; then
+    echo "Running setup script: $SETUP_SCRIPT"
+    chmod +x "$SETUP_SCRIPT"
+    bash "$SETUP_SCRIPT" || { echo "Failed to execute $SETUP_SCRIPT"; exit 1; }
+else
+    echo "Setup script not found: $SETUP_SCRIPT"
+    exit 1
+fi
