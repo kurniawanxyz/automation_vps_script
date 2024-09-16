@@ -56,7 +56,8 @@ echo "----- BUILDING PROJECT -----"
 mvn clean install
 
 echo "----- STARTING SPRING BOOT APPLICATION -----"
-mvn spring-boot:run
+LOG_FILE="spring-boot.log"
+mvn spring-boot:run > "$LOG_FILE" 2>&1 &
 
 PID=$!
 echo "Spring Boot application is running with PID $PID"
