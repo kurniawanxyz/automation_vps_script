@@ -14,3 +14,11 @@ node -v # should print `v20.17.0`
 npm -v # should print `10.8.2`
 
 echo "INSTALL NODE JS & NODE SUCCESSFULLY"
+
+echo "TEST WITH EXAMPLE APPLICATION"
+
+cd example-apps/nodejs && npm install && npm run dev
+
+echo "RUNNING IN PORT {public ip}:10001"
+
+

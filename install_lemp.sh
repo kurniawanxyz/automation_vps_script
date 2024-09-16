@@ -87,6 +87,7 @@ sudo systemctl reload nginx
 # Create a PHP info file for testing
 echo "<?php phpinfo(); ?>" | sudo tee /var/www/html/info.php
 
+
 # Restart services
 sudo systemctl restart nginx
 sudo systemctl restart php8.2-fpm

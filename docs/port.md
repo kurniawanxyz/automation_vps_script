@@ -1,0 +1,6 @@
+# PORT YANG DIGUNAKAN EXAMPLE APP
+10001 = php
+10002 = node
+10003 = python
+10004 = golang
+10005 = java
